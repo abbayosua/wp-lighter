@@ -15,6 +15,7 @@ class WPLighter_Settings {
         add_action( 'admin_menu', array( $this, 'add_admin_menu' ) );
         add_action( 'admin_init', array( $this, 'settings_init' ) );
         add_action( 'admin_post_wp_lighter_toggle_status', array( $this, 'handle_toggle_status' ) );
+        add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_scripts' ) );
     }
 
     public function add_admin_menu() {
@@ -269,11 +270,25 @@ class WPLighter_Settings {
                 ?>
                 <h2>Advanced Settings</h2>
                 <?php do_settings_sections( 'wp-lighter' ); ?>
-                <?php submit_button( 'Save Changes' ); ?>
+                <p class="submit">
+                    <input type="button" name="check_all" id="wp-lighter-check-all" class="button button-secondary" value="Check All">
+                    <input type="button" name="uncheck_all" id="wp-lighter-uncheck-all" class="button button-secondary" value="Uncheck All">
+                    <?php submit_button( 'Save Changes', 'primary', 'submit', false ); ?>
+                </p>
             </form>
             <?php $this->display_debug_table(); ?>
         </div>
         <?php
+    }
+
+    public function enqueue_admin_scripts() {
+        wp_enqueue_script(
+            'wp-lighter-admin-script',
+            plugin_dir_url( __FILE__ ) . '../js/wp-lighter-admin.js',
+            array( 'jquery' ),
+            null,
+            true
+        );
     }
 
     public function display_debug_table() {
@@ -305,7 +320,7 @@ class WPLighter_Settings {
 
         echo '<h2>Current WP Lighter Settings (Debug)</h2>';
         echo '<table class="wp-list-table widefat fixed striped">';
-        echo '<thead><tr><th>Setting</th><th>Status/Value</th></tr></thead>';
+        echo '<thead><tr><th>Setting</th><th>Status/Value</th><th>Proof/Verification</th></tr></thead>';
         echo '<tbody>';
 
         foreach ( $settings_map as $field_id => $label ) {
@@ -338,10 +353,83 @@ class WPLighter_Settings {
             echo '<tr>';
             echo '<td>' . esc_html( $label ) . '</td>';
             echo '<td>' . $display_value . '</td>';
+            echo '<td>' . $this->get_feature_proof_link( $field_id ) . '</td>';
             echo '</tr>';
         }
 
         echo '</tbody>';
         echo '</table>';
+    }
+
+    /**
+     * Provides a link or instruction to verify if a feature is disabled.
+     *
+     * @param string $field_id The ID of the setting field.
+     * @return string HTML string with verification link or instruction.
+     */
+    private function get_feature_proof_link( $field_id ) {
+        $proof = '';
+        $site_url = get_site_url(); // Get the WordPress site URL
+
+        switch ( $field_id ) {
+            case 'disable_gutenberg':
+                $proof = 'Check post editor (requires admin access)';
+                break;
+            case 'disable_emojis':
+                $proof = 'Inspect page source for "wp-emoji-release.min.js" on frontend';
+                break;
+            case 'disable_embeds':
+                $proof = 'Try embedding a YouTube link in a post and view frontend';
+                break;
+            case 'disable_xmlrpc':
+                $proof = '<a href="' . esc_url( $site_url . '/xmlrpc.php' ) . '" target="_blank">Access ' . esc_html( $site_url . '/xmlrpc.php' ) . '</a> (should show "XML-RPC server accepts POST requests only.")';
+                break;
+            case 'disable_rest_api_non_logged_in':
+                $proof = '<a href="' . esc_url( $site_url . '/wp-json/wp/v2/posts' ) . '" target="_blank">Access ' . esc_html( $site_url . '/wp-json/wp/v2/posts' ) . '</a> as non-logged-in user (should return error)';
+                break;
+            case 'disable_rss_feeds':
+                $proof = '<a href="' . esc_url( $site_url . '/feed/' ) . '" target="_blank">Access ' . esc_html( $site_url . '/feed/' ) . '</a> (should show error or empty feed)';
+                break;
+            case 'remove_wlwmanifest_link':
+                $proof = 'Inspect page source for "wlwmanifest.xml" link';
+                break;
+            case 'remove_rsd_link':
+                $proof = 'Inspect page source for "rsd.xml" link';
+                break;
+            case 'remove_shortlink':
+                $proof = 'Inspect page source for "shortlink" rel attribute';
+                break;
+            case 'remove_wp_generator':
+                $proof = 'Inspect page source for "meta name=\'generator\'" tag';
+                break;
+            case 'disable_dashicons_non_admin':
+                $proof = 'View frontend as non-admin user, inspect for dashicons CSS';
+                break;
+            case 'disable_jquery_migrate':
+                $proof = 'Inspect page source for "jquery-migrate.min.js" script';
+                break;
+            case 'disable_heartbeat_api':
+                $proof = 'Monitor network requests in browser console on admin pages';
+                break;
+            case 'force_native_lazy_loading':
+                $proof = 'Inspect image tags on frontend for "loading=\'lazy\'" attribute';
+                break;
+            case 'add_decoding_async':
+                $proof = 'Inspect image tags on frontend for "decoding=\'async\'" attribute';
+                break;
+            case 'limit_post_revisions':
+                $proof = 'Backend setting, check `wp-config.php` or database';
+                break;
+            case 'set_autosave_interval':
+                $proof = 'Backend setting, check `wp-config.php` or post editor behavior';
+                break;
+            case 'daily_spam_comment_cleanup':
+                $proof = 'Backend setting, check scheduled tasks (e.g., using WP-Crontrol plugin)';
+                break;
+            default:
+                $proof = 'N/A';
+                break;
+        }
+        return $proof;
     }
 }
