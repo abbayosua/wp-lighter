@@ -1,11 +1,11 @@
 <?php
 /**
  * Plugin Name: WP Lighter
- * Plugin URI: https://example.com/wp-lighter
+ * Plugin URI: https://abbayosua.web.id/wp-lighter
  * Description: A WordPress plugin to lighten your WordPress installation by disabling core features, removing head bloat, controlling resources, optimizing media, and enforcing database hygiene.
  * Version: 1.0.0
- * Author: Roo
- * Author URI: https://example.com/
+ * Author: Abba Yosua
+ * Author URI: https://abbayosua.web.id/
  * License: GPL2
  */
 

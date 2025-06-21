@@ -1,11 +1,11 @@
 # WP Lighter
 
-**Plugin Name:** WP Lighter
-**Plugin URI:** https://abbayosua.web.id/wp-lighter
-**Description:** A WordPress plugin designed to optimize your WordPress installation by disabling non-essential core features, removing head bloat, controlling resource loading, optimizing media, and enforcing database hygiene. This plugin aims to improve site performance, reduce unnecessary requests, and maintain a cleaner, more efficient WordPress environment.
-**Version:** 1.0.0
-**Author:** Abba Yosua
-**Author URI:** https://abbayosua.web.id
+*   **Plugin Name:** WP Lighter
+*   **Plugin URI:** https://abbayosua.web.id/wp-lighter
+*   **Description:** A WordPress plugin designed to optimize your WordPress installation by disabling non-essential core features, removing head bloat, controlling resource loading, optimizing media, and enforcing database hygiene. This plugin aims to improve site performance, reduce unnecessary requests, and maintain a cleaner, more efficient WordPress environment.
+*   **Version:** 1.0.0
+*   **Author:** Abba Yosua
+*   **Author URI:** https://abbayosua.web.id
 
 ## Overview
 
